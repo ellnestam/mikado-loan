@@ -22,16 +22,18 @@ public class LoanHandler extends AbstractHandler {
         response.setStatus(HttpServletResponse.SC_OK);
         baseRequest.setHandled(true);
         PrintWriter writer = response.getWriter();
-        if (isApplication(request)) {
-            Application application = new Application(getNextId());
-            LoanRepository.store(application);
-            String json = new Gson().toJson(application);
-            writer.println(json);
-        } else if (isStatusRequest(request) && idSpecified(request)) {
-            String application = fetchLoanInfo(request.getParameter(TICKET_ID));
-            writer.println(application);
-        } else {
-            writer.println("Incorrect parameters provided");
+        try {
+            if (isApplication(request)) {
+                Application application = new Application(getNextId());
+                Ticket ticket = LoanRepository.store(application);
+                writer.println(new Gson().toJson(ticket));
+            } else if (isStatusRequest(request) && idSpecified(request)) {
+                writer.println(fetchLoanInfo(request.getParameter(TICKET_ID)));
+            } else {
+                writer.println("Incorrect parameters provided");
+            }
+        } catch (ApplicationException e) {
+            writer.println("Uh oh! Problem occured: " + e.getMessage());
         }
     }
 

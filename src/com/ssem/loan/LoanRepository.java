@@ -42,6 +42,7 @@ public class LoanRepository {
 
     public static Ticket store(Application application) {
         try {
+            new File(ROOT).mkdirs();
             FileOutputStream fileOutputStream = new FileOutputStream(fileFromApplication(application.getApplicationNo()));
             fileOutputStream.write(new Gson().toJson(application).getBytes());
             fileOutputStream.close();
