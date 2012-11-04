@@ -13,6 +13,8 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import com.google.gson.Gson;
 
 public class LoanHandler extends AbstractHandler {
+    private static final String APPLICATION = "application";
+    private static final String FETCH = "fetch";
     private static final String TICKET_ID = "ticketId";
 
     @Override
@@ -55,11 +57,11 @@ public class LoanHandler extends AbstractHandler {
     }
 
     private boolean isStatusRequest(HttpServletRequest request) {
-        return request.getParameter("fetch") != null;
+        return FETCH.equals(request.getParameter("action"));
     }
 
     private boolean isApplication(HttpServletRequest request) {
-        return request.getParameter("apply") != null;
+        return APPLICATION.equals(request.getParameter("action"));
     }
 
     private String fetchLoanInfo(String ticketId) {
