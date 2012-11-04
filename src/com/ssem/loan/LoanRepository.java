@@ -12,7 +12,7 @@ import com.google.gson.Gson;
 public class LoanRepository {
 
     private static final String FILE_EXTENSION = ".loan";
-    private final static String ROOT = "c:/temp/loan";
+    private final static String ROOT = "/home/ola/loan";
 
     public static Application fetch(String ticketId) {
         return fetch(Long.parseLong(ticketId));
@@ -37,13 +37,14 @@ public class LoanRepository {
             }
         });
 
-        return files.length + 1;
+        return files == null ? 0 : files.length + 1;
     }
 
     public static Ticket store(Application application) {
         try {
             new File(ROOT).mkdirs();
-            FileOutputStream fileOutputStream = new FileOutputStream(fileFromApplication(application.getApplicationNo()));
+            FileOutputStream fileOutputStream = new FileOutputStream(
+                    fileFromApplication(application.getApplicationNo()));
             fileOutputStream.write(new Gson().toJson(application).getBytes());
             fileOutputStream.close();
             return new Ticket(application.getApplicationNo());
@@ -56,6 +57,13 @@ public class LoanRepository {
 
     private static File fileFromApplication(long applicationNo) {
         return new File(ROOT + "/" + applicationNo + FILE_EXTENSION);
+    }
+
+    public static Ticket approve(String ticketId) {
+        Application application = fetch(ticketId);
+        application.approve();
+        store(application);
+        return new Ticket(application.getApplicationNo());
     }
 
 }

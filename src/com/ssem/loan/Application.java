@@ -14,6 +14,8 @@ public class Application {
     }
 
     private String email;
+    private boolean approved;
+    private String contact;
 
     public String getEmail() {
         return email;
@@ -33,6 +35,26 @@ public class Application {
 
     public void setApplicationNo(long applicationNo) {
         this.applicationNo = applicationNo;
+    }
+
+    public void approve() {
+        setApproved(true);
+    }
+
+    public boolean isApproved() {
+        return approved;
+    }
+
+    public void setApproved(boolean approved) {
+        this.approved = approved;
+    }
+
+    public void setContact(String who) {
+        this.contact = who;
+    }
+
+    public String getContact() {
+        return contact;
     }
 
 }

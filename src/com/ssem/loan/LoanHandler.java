@@ -13,9 +13,10 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import com.google.gson.Gson;
 
 public class LoanHandler extends AbstractHandler {
-    private static final String APPLICATION = "application";
+    private static final String APPLICATION = "apply";
     private static final String FETCH = "fetch";
     private static final String TICKET_ID = "ticketId";
+    private static final String APPROVE = "approve";
 
     @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
@@ -27,10 +28,14 @@ public class LoanHandler extends AbstractHandler {
         try {
             if (isApplication(request)) {
                 Application application = new Application(getNextId());
+                application.setAmount(amountFrom(request));
+                application.setContact(contactFrom(request));
                 Ticket ticket = LoanRepository.store(application);
                 writer.println(new Gson().toJson(ticket));
             } else if (isStatusRequest(request) && idSpecified(request)) {
                 writer.println(fetchLoanInfo(request.getParameter(TICKET_ID)));
+            } else if (isApproval(request) && idSpecified(request)) {
+                writer.println(approveLoan(request.getParameter(TICKET_ID)));
             } else {
                 writer.println("Incorrect parameters provided");
             }
@@ -39,8 +44,24 @@ public class LoanHandler extends AbstractHandler {
         }
     }
 
+    private String contactFrom(HttpServletRequest request) {
+        return request.getParameter("contact");
+    }
+
+    private long amountFrom(HttpServletRequest request) {
+        return Long.parseLong(request.getParameter("amount"));
+    }
+
+    private String approveLoan(String parameter) {
+        return new Gson().toJson(LoanRepository.approve(parameter));
+    }
+
+    private boolean isApproval(HttpServletRequest request) {
+        return APPROVE.equals(request.getParameter("action"));
+    }
+
     private boolean idSpecified(HttpServletRequest request) {
-        return request.getParameter(TICKET_ID) != null && validId(request) != 0;
+        return request.getParameter(TICKET_ID) != null && validId(request) >= 0;
     }
 
     private long validId(HttpServletRequest request) {
@@ -48,7 +69,7 @@ public class LoanHandler extends AbstractHandler {
         try {
             return Long.parseLong(ticketId);
         } catch (NumberFormatException e) {
-            return 0L;
+            return -1L;
         }
     }
 
