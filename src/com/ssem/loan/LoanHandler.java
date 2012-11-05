@@ -1,5 +1,7 @@
 package com.ssem.loan;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -27,8 +29,7 @@ public class LoanHandler extends AbstractHandler {
         PrintWriter writer = response.getWriter();
         try {
             if (isApplication(request)) {
-                Application application = new Application();
-                application.getNextId();
+                Application application = new Application(getNextId());
                 application.setAmount(amountFrom(request));
                 application.setContact(contactFrom(request));
                 Ticket ticket = LoanRepository.store(application);
@@ -86,4 +87,17 @@ public class LoanHandler extends AbstractHandler {
         Application formerApplication = LoanRepository.fetch(ticketId);
         return new Gson().toJson(formerApplication);
     }
+
+    public long getNextId() {
+        File file = new File(LoanRepository.REPOSITORY_ROOT);
+        File[] files = file.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.getName().endsWith(LoanRepository.FILE_EXTENSION);
+            }
+        });
+
+        return files == null ? 0 : files.length + 1;
+    }
+
 }
