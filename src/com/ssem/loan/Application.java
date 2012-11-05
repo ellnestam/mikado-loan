@@ -1,5 +1,8 @@
 package com.ssem.loan;
 
+import java.io.File;
+import java.io.FileFilter;
+
 public class Application {
 
     private long applicationNo;
@@ -22,10 +25,6 @@ public class Application {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Application(long applicationNo) {
-        this.applicationNo = applicationNo;
     }
 
     public long getApplicationNo() {
@@ -54,6 +53,20 @@ public class Application {
 
     public String getContact() {
         return contact;
+    }
+
+    public void getNextId() {
+        File file = new File(LoanRepository.REPOSITORY_ROOT);
+        File[] files = file.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.getName().endsWith(LoanRepository.FILE_EXTENSION);
+            }
+        });
+
+        long id = files == null ? 0 : files.length + 1;
+
+        setApplicationNo(id);
     }
 
 }

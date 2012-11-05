@@ -1,7 +1,6 @@
 package com.ssem.loan;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,8 +10,8 @@ import com.google.gson.Gson;
 
 public class LoanRepository {
 
-    private static final String FILE_EXTENSION = ".loan";
-    private final static String ROOT = "/home/ola/loan";
+    public final static String FILE_EXTENSION = ".loan";
+    public final static String REPOSITORY_ROOT = "/home/ola/loan";
 
     public static Application fetch(String ticketId) {
         return fetch(Long.parseLong(ticketId));
@@ -28,21 +27,9 @@ public class LoanRepository {
         }
     }
 
-    public static long getNextId() {
-        File file = new File(ROOT);
-        File[] files = file.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.getName().endsWith(FILE_EXTENSION);
-            }
-        });
-
-        return files == null ? 0 : files.length + 1;
-    }
-
     public static Ticket store(Application application) {
         try {
-            new File(ROOT).mkdirs();
+            new File(REPOSITORY_ROOT).mkdirs();
             FileOutputStream fileOutputStream = new FileOutputStream(
                     fileFromApplication(application.getApplicationNo()));
             fileOutputStream.write(new Gson().toJson(application).getBytes());
@@ -56,7 +43,7 @@ public class LoanRepository {
     }
 
     private static File fileFromApplication(long applicationNo) {
-        return new File(ROOT + "/" + applicationNo + FILE_EXTENSION);
+        return new File(REPOSITORY_ROOT + "/" + applicationNo + FILE_EXTENSION);
     }
 
     public static Ticket approve(String ticketId) {

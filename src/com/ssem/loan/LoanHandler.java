@@ -27,7 +27,8 @@ public class LoanHandler extends AbstractHandler {
         PrintWriter writer = response.getWriter();
         try {
             if (isApplication(request)) {
-                Application application = new Application(getNextId());
+                Application application = new Application();
+                application.getNextId();
                 application.setAmount(amountFrom(request));
                 application.setContact(contactFrom(request));
                 Ticket ticket = LoanRepository.store(application);
@@ -71,10 +72,6 @@ public class LoanHandler extends AbstractHandler {
         } catch (NumberFormatException e) {
             return -1L;
         }
-    }
-
-    private long getNextId() {
-        return LoanRepository.getNextId();
     }
 
     private boolean isStatusRequest(HttpServletRequest request) {
