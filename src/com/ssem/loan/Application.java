@@ -4,6 +4,9 @@ public class Application {
 
     private long applicationNo;
     private long amount;
+    private String email;
+    private String contact;
+    private boolean approved;
 
     public long getAmount() {
         return amount;
@@ -12,10 +15,6 @@ public class Application {
     public void setAmount(long amount) {
         this.amount = amount;
     }
-
-    private String email;
-    private boolean approved;
-    private String contact;
 
     public String getEmail() {
         return email;
