@@ -13,21 +13,21 @@ public class LoanRepository {
     public final static String FILE_EXTENSION = ".loan";
     public final static String REPOSITORY_ROOT = "/home/ola/loan";
 
-    public static Application fetch(String ticketId) {
+    public static LoanApplication fetch(String ticketId) {
         return fetch(Long.parseLong(ticketId));
     }
 
-    public static Application fetch(long ticketId) {
+    public static LoanApplication fetch(long ticketId) {
         File file = fileFromApplication(ticketId);
         try {
             String output = new Scanner(file).useDelimiter("\\Z").next();
-            return new Gson().fromJson(output, Application.class);
+            return new Gson().fromJson(output, LoanApplication.class);
         } catch (FileNotFoundException e) {
             throw new ApplicationException("Ticket not found", e);
         }
     }
 
-    public static Ticket store(Application application) {
+    public static Ticket store(LoanApplication application) {
         try {
             new File(REPOSITORY_ROOT).mkdirs();
             FileOutputStream fileOutputStream = new FileOutputStream(
@@ -47,7 +47,7 @@ public class LoanRepository {
     }
 
     public static Ticket approve(String ticketId) {
-        Application application = fetch(ticketId);
+        LoanApplication application = fetch(ticketId);
         application.approve();
         store(application);
         return new Ticket(application.getApplicationNo());

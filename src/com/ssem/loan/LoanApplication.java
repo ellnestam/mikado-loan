@@ -1,6 +1,6 @@
 package com.ssem.loan;
 
-public class Application {
+public class LoanApplication {
 
     private long applicationNo;
     private long amount;
@@ -8,7 +8,7 @@ public class Application {
     private String contact;
     private boolean approved;
 
-    public Application(long id) {
+    public LoanApplication(long id) {
         applicationNo = id;
     }
 
