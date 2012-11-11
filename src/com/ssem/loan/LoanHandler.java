@@ -29,7 +29,7 @@ public class LoanHandler extends AbstractHandler {
         PrintWriter writer = response.getWriter();
         try {
             if (isApplication(request)) {
-                LoanApplication application = new LoanApplication(getNextId());
+                LoanApplication application = new LoanApplication();
                 application.setAmount(amountFrom(request));
                 application.setContact(contactFrom(request));
                 Ticket ticket = LoanRepository.store(application);
@@ -88,7 +88,7 @@ public class LoanHandler extends AbstractHandler {
         return new Gson().toJson(formerApplication);
     }
 
-    public long getNextId() {
+    public static long getNextId() {
         File file = new File(LoanRepository.REPOSITORY_ROOT);
         File[] files = file.listFiles(new FileFilter() {
             @Override
