@@ -25,6 +25,17 @@ import javax.servlet.http.Part;
 
 public class StubbedServletRequest implements HttpServletRequest {
 
+    private final Map<String, String> params;
+
+    public StubbedServletRequest(Map<String, String> params) {
+        this.params = params;
+    }
+
+    @Override
+    public String getParameter(String key) {
+        return params.get(key);
+    }
+
     @Override
     public AsyncContext getAsyncContext() {
         // TODO Auto-generated method stub
@@ -99,12 +110,6 @@ public class StubbedServletRequest implements HttpServletRequest {
 
     @Override
     public Enumeration<Locale> getLocales() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String getParameter(String arg0) {
         // TODO Auto-generated method stub
         return null;
     }
