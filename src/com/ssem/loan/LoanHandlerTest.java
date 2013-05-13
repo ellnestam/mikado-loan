@@ -1,7 +1,6 @@
 package com.ssem.loan;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,7 +16,7 @@ public class LoanHandlerTest {
 
     @Before
     public void setUp() {
-        loanHandler = new LoanHandler();
+        loanHandler = new LoanHandler(new MemoryLoanRepository());
         baseRequest = new StubbedRequest();
         response = new StubbedResponse();
     }
@@ -36,7 +35,7 @@ public class LoanHandlerTest {
         loanHandler.handle(null, baseRequest, request, response);
         response.getWriter().flush();
         String handlerResponse = response.responseAsText();
-        assertTrue("Was: " + handlerResponse, handlerResponse.startsWith("{\"id\":"));
+        assertEquals("{\"id\":1}\n", handlerResponse);
     }
 
     @Test
