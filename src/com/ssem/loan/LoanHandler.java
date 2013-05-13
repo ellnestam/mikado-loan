@@ -19,11 +19,6 @@ public class LoanHandler extends AbstractHandler {
     public static final String FETCH = "fetch";
     public static final String TICKET_ID = "ticketId";
     public static final String APPROVE = "approve";
-    private final LoanRepository repo;
-
-    public LoanHandler(LoanRepository loanRepository) {
-        repo = loanRepository;
-    }
 
     @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
@@ -37,7 +32,7 @@ public class LoanHandler extends AbstractHandler {
                 LoanApplication application = new LoanApplication();
                 application.setAmount(amountFrom(request));
                 application.setContact(contactFrom(request));
-                Ticket ticket = repo.store(application);
+                Ticket ticket = LoanRepository.store(application);
                 writer.println(new Gson().toJson(ticket));
             } else if (isStatusRequest(request) && idSpecified(request)) {
                 writer.println(fetchLoanInfo(request.getParameter(TICKET_ID)));
@@ -60,7 +55,7 @@ public class LoanHandler extends AbstractHandler {
     }
 
     private String approveLoan(String parameter) {
-        return new Gson().toJson(repo.approve(parameter));
+        return new Gson().toJson(LoanRepository.approve(parameter));
     }
 
     private boolean isApproval(HttpServletRequest request) {
@@ -89,16 +84,16 @@ public class LoanHandler extends AbstractHandler {
     }
 
     private String fetchLoanInfo(String ticketId) {
-        LoanApplication formerApplication = FileBasedLoanRepository.fetch(ticketId);
+        LoanApplication formerApplication = LoanRepository.fetch(ticketId);
         return new Gson().toJson(formerApplication);
     }
 
     public static long getNextId() {
-        File file = new File(FileBasedLoanRepository.REPOSITORY_ROOT);
+        File file = new File(LoanRepository.REPOSITORY_ROOT);
         File[] files = file.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
-                return pathname.getName().endsWith(FileBasedLoanRepository.FILE_EXTENSION);
+                return pathname.getName().endsWith(LoanRepository.FILE_EXTENSION);
             }
         });
 

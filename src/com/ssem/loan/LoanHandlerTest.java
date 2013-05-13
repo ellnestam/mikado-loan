@@ -16,7 +16,7 @@ public class LoanHandlerTest {
 
     @Before
     public void setUp() {
-        loanHandler = new LoanHandler(new MemoryLoanRepository());
+        loanHandler = new LoanHandler();
         baseRequest = new StubbedRequest();
         response = new StubbedResponse();
     }
