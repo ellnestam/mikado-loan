@@ -13,10 +13,12 @@ public class LoanHandlerTest {
     LoanHandler loanHandler;
     StubbedRequest baseRequest;
     StubbedResponse response;
+    MemoryLoanRepository repository;
 
     @Before
     public void setUp() {
-        loanHandler = new LoanHandler(new MemoryLoanRepository());
+        repository = new MemoryLoanRepository();
+        loanHandler = new LoanHandler(repository);
         baseRequest = new StubbedRequest();
         response = new StubbedResponse();
     }
@@ -40,7 +42,7 @@ public class LoanHandlerTest {
 
     @Test
     public void givenAnIdTheStatusOfLoanIsReturned() throws Exception {
-        StubbedServletRequest request = new StubbedServletRequest(fetchParams());
+        StubbedServletRequest request = new StubbedServletRequest(fetchParams("4"));
         loanHandler.handle(null, baseRequest, request, response);
         response.getWriter().flush();
         assertEquals("{\"applicationNo\":4,\"amount\":100,\"contact\":\"a@ducks.burg\",\"approved\":true}\n",
@@ -49,16 +51,17 @@ public class LoanHandlerTest {
 
     @Test
     public void loanApplicationsCanBeApproved() throws Exception {
-        StubbedServletRequest request = new StubbedServletRequest(approveParams());
+        long id = repository.apply(100, "a@a.com");
+        StubbedServletRequest request = new StubbedServletRequest(approveParams(id + ""));
         loanHandler.handle(null, baseRequest, request, response);
         response.getWriter().flush();
-        assertEquals("{\"id\":3}\n", response.responseAsText());
+        assertEquals("{\"id\":" + id + "}\n", response.responseAsText());
     }
 
-    private HashMap<String, String> approveParams() {
+    private HashMap<String, String> approveParams(String ticketId) {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("action", LoanHandler.APPROVE);
-        params.put("ticketId", "3");
+        params.put("ticketId", ticketId);
         return params;
     }
 
@@ -70,10 +73,10 @@ public class LoanHandlerTest {
         return params;
     }
 
-    private HashMap<String, String> fetchParams() {
+    private HashMap<String, String> fetchParams(String ticketId) {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("action", LoanHandler.FETCH);
-        params.put("ticketId", "4");
+        params.put("ticketId", ticketId);
         return params;
     }
 }
