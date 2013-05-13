@@ -29,7 +29,8 @@ public class MemoryLoanRepository implements LoanRepository {
         return new Ticket(application.getApplicationNo());
     }
 
-    private LoanApplication fetch(String ticketId) {
+    @Override
+    public LoanApplication fetch(String ticketId) {
         return applications.get(ticketId);
 
     }
@@ -37,8 +38,9 @@ public class MemoryLoanRepository implements LoanRepository {
     public long apply(long amount, String contact) {
         LoanApplication loanApplication = new LoanApplication();
         loanApplication.setAmount(amount);
-        loanApplication.setEmail(contact);
+        loanApplication.setContact(contact);
         int id = nextId();
+        loanApplication.setApplicationNo(id);
         applications.put(id + "", loanApplication);
         return id;
     }

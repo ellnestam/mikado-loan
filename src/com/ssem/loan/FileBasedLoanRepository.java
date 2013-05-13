@@ -1,6 +1,7 @@
 package com.ssem.loan;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,7 +14,8 @@ public class FileBasedLoanRepository implements LoanRepository {
     public final static String FILE_EXTENSION = ".loan";
     public final static String REPOSITORY_ROOT = "/home/ola/loan";
 
-    public static LoanApplication fetch(String ticketId) {
+    @Override
+    public LoanApplication fetch(String ticketId) {
         return fetch(Long.parseLong(ticketId));
     }
 
@@ -27,7 +29,9 @@ public class FileBasedLoanRepository implements LoanRepository {
         }
     }
 
+    @Override
     public Ticket store(LoanApplication application) {
+        application.setApplicationNo(FileBasedLoanRepository.getNextId());
         try {
             new File(REPOSITORY_ROOT).mkdirs();
             FileOutputStream fileOutputStream = new FileOutputStream(
@@ -46,11 +50,24 @@ public class FileBasedLoanRepository implements LoanRepository {
         return new File(REPOSITORY_ROOT + "/" + applicationNo + FILE_EXTENSION);
     }
 
+    @Override
     public Ticket approve(String ticketId) {
         LoanApplication application = fetch(ticketId);
         application.approve();
         store(application);
         return new Ticket(application.getApplicationNo());
+    }
+
+    public static long getNextId() {
+        File file = new File(REPOSITORY_ROOT);
+        File[] files = file.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.getName().endsWith(FILE_EXTENSION);
+            }
+        });
+
+        return files == null ? 0 : files.length + 1;
     }
 
 }

@@ -8,10 +8,6 @@ public class LoanApplication {
     private String contact;
     private boolean approved;
 
-    public LoanApplication() {
-        applicationNo = LoanHandler.getNextId();
-    }
-
     public long getAmount() {
         return amount;
     }

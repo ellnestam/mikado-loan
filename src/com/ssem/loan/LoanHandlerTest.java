@@ -42,11 +42,14 @@ public class LoanHandlerTest {
 
     @Test
     public void givenAnIdTheStatusOfLoanIsReturned() throws Exception {
-        StubbedServletRequest request = new StubbedServletRequest(fetchParams("4"));
+        int amount = 3000;
+        String contact = "a@ducks.burg";
+        long id = repository.apply(amount, contact);
+        StubbedServletRequest request = new StubbedServletRequest(fetchParams(id + ""));
         loanHandler.handle(null, baseRequest, request, response);
         response.getWriter().flush();
-        assertEquals("{\"applicationNo\":4,\"amount\":100,\"contact\":\"a@ducks.burg\",\"approved\":true}\n",
-                response.responseAsText());
+        assertEquals("{\"applicationNo\":" + id + ",\"amount\":" + amount + ",\"contact\":\"" + contact
+                + "\",\"approved\":false}\n", response.responseAsText());
     }
 
     @Test

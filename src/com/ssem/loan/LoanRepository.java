@@ -6,4 +6,6 @@ public interface LoanRepository {
 
     Ticket approve(String ticketId);
 
+    public abstract LoanApplication fetch(String ticketId);
+
 }
