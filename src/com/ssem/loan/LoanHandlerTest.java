@@ -24,16 +24,19 @@ public class LoanHandlerTest {
     }
 
     @Test
-    public void enErrorMessageIsReturnedWheneverAnIncompleteRequestIsMade() throws Exception {
-        StubbedServletRequest request = new StubbedServletRequest(Collections.<String, String> emptyMap());
+    public void incompleteRequest() throws Exception {
+        StubbedServletRequest request = new StubbedServletRequest(
+                Collections.<String, String> emptyMap());
         loanHandler.handle(null, baseRequest, request, response);
         response.getWriter().flush();
-        assertEquals("Incorrect parameters provided\n", response.responseAsText());
+        assertEquals("Incorrect parameters provided\n",
+                response.responseAsText());
     }
 
     @Test
-    public void givenThatAnApplicationContainsAllNecessaryInformationAnIdIsReturned() throws Exception {
-        StubbedServletRequest request = new StubbedServletRequest(applyParams());
+    public void compleApplication() throws Exception {
+        StubbedServletRequest request = new StubbedServletRequest(
+                applyParams());
         loanHandler.handle(null, baseRequest, request, response);
         response.getWriter().flush();
         String handlerResponse = response.responseAsText();
@@ -45,17 +48,20 @@ public class LoanHandlerTest {
         int amount = 3000;
         String contact = "a@ducks.burg";
         long id = repository.apply(amount, contact);
-        StubbedServletRequest request = new StubbedServletRequest(fetchParams(id + ""));
+        StubbedServletRequest request = new StubbedServletRequest(
+                fetchParams(id + ""));
         loanHandler.handle(null, baseRequest, request, response);
         response.getWriter().flush();
-        assertEquals("{\"applicationNo\":" + id + ",\"amount\":" + amount + ",\"contact\":\"" + contact
+        assertEquals("{\"applicationNo\":" + id + ",\"amount\":"
+                + amount + ",\"contact\":\"" + contact
                 + "\",\"approved\":false}\n", response.responseAsText());
     }
 
     @Test
     public void loanApplicationsCanBeApproved() throws Exception {
         long id = repository.apply(100, "a@a.com");
-        StubbedServletRequest request = new StubbedServletRequest(approveParams(id + ""));
+        StubbedServletRequest request = new StubbedServletRequest(
+                approveParams(id + ""));
         loanHandler.handle(null, baseRequest, request, response);
         response.getWriter().flush();
         assertEquals("{\"id\":" + id + "}\n", response.responseAsText());
