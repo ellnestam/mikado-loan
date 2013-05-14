@@ -26,7 +26,8 @@ public class LoanHandler extends AbstractHandler {
     }
 
     @Override
-    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
+    public void handle(String target, Request baseRequest,
+            HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         response.setContentType("application/json;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
@@ -40,9 +41,11 @@ public class LoanHandler extends AbstractHandler {
                 Ticket ticket = repo.store(application);
                 writer.println(new Gson().toJson(ticket));
             } else if (isStatusRequest(request) && idSpecified(request)) {
-                writer.println(fetchLoanInfo(request.getParameter(TICKET_ID)));
+                writer.println(fetchLoanInfo(request
+                        .getParameter(TICKET_ID)));
             } else if (isApproval(request) && idSpecified(request)) {
-                writer.println(approveLoan(request.getParameter(TICKET_ID)));
+                writer.println(approveLoan(request
+                        .getParameter(TICKET_ID)));
             } else {
                 writer.println("Incorrect parameters provided");
             }
@@ -68,7 +71,8 @@ public class LoanHandler extends AbstractHandler {
     }
 
     private boolean idSpecified(HttpServletRequest request) {
-        return request.getParameter(TICKET_ID) != null && validId(request) >= 0;
+        return request.getParameter(TICKET_ID) != null
+                && validId(request) >= 0;
     }
 
     private long validId(HttpServletRequest request) {
@@ -89,7 +93,8 @@ public class LoanHandler extends AbstractHandler {
     }
 
     private String fetchLoanInfo(String ticketId) {
-        LoanApplication formerApplication = FileBasedLoanRepository.fetch(ticketId);
+        LoanApplication formerApplication = FileBasedLoanRepository
+                .fetch(ticketId);
         return new Gson().toJson(formerApplication);
     }
 
@@ -98,7 +103,8 @@ public class LoanHandler extends AbstractHandler {
         File[] files = file.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
-                return pathname.getName().endsWith(FileBasedLoanRepository.FILE_EXTENSION);
+                return pathname.getName().endsWith(
+                        FileBasedLoanRepository.FILE_EXTENSION);
             }
         });
 
