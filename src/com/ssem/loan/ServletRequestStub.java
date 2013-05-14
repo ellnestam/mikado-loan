@@ -23,11 +23,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
-public class StubbedServletRequest implements HttpServletRequest {
+public class ServletRequestStub implements HttpServletRequest {
 
     private final Map<String, String> params;
 
-    public StubbedServletRequest(Map<String, String> params) {
+    public ServletRequestStub(Map<String, String> params) {
         this.params = params;
     }
 

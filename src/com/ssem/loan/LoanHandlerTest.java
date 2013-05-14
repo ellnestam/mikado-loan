@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,45 +12,50 @@ import org.junit.Test;
 public class LoanHandlerTest {
 
     LoanHandler loanHandler;
-    StubbedRequest baseRequest;
-    StubbedResponse response;
+    RequestStub baseRequest;
+    ResponseStub response;
 
     @Before
     public void setUp() {
         loanHandler = new LoanHandler();
-        baseRequest = new StubbedRequest();
-        response = new StubbedResponse();
+        baseRequest = new RequestStub();
+        response = new ResponseStub();
     }
 
     @Test
-    public void enErrorMessageIsReturnedWheneverAnIncompleteRequestIsMade() throws Exception {
-        StubbedServletRequest request = new StubbedServletRequest(Collections.<String, String> emptyMap());
+    public void incompleteRequest() throws Exception {
+        Map<String, String> params = Collections
+                .<String, String> emptyMap();
+        ServletRequestStub request = new ServletRequestStub(params);
         loanHandler.handle(null, baseRequest, request, response);
         response.getWriter().flush();
-        assertEquals("Incorrect parameters provided\n", response.responseAsText());
+        String actual = response.responseAsText();
+        assertEquals("Incorrect parameters provided\n", actual);
     }
 
     @Test
-    public void givenThatAnApplicationContainsAllNecessaryInformationAnIdIsReturned() throws Exception {
-        StubbedServletRequest request = new StubbedServletRequest(applyParams());
+    public void completeApplication() throws Exception {
+        ServletRequestStub request = new ServletRequestStub(applyParams());
         loanHandler.handle(null, baseRequest, request, response);
         response.getWriter().flush();
-        String handlerResponse = response.responseAsText();
-        assertEquals("{\"id\":1}\n", handlerResponse);
+        assertEquals("{\"id\":1}\n", response.responseAsText());
     }
 
     @Test
     public void givenAnIdTheStatusOfLoanIsReturned() throws Exception {
-        StubbedServletRequest request = new StubbedServletRequest(fetchParams());
+        ServletRequestStub request = new ServletRequestStub(fetchParams());
         loanHandler.handle(null, baseRequest, request, response);
         response.getWriter().flush();
-        assertEquals("{\"applicationNo\":4,\"amount\":100,\"contact\":\"a@ducks.burg\",\"approved\":true}\n",
+
+        assertEquals("{\"applicationNo\":4," + "\"amount\":100,"
+                + "\"contact\":\"a@ducks.burg\",\"approved\":true}\n",
                 response.responseAsText());
     }
 
     @Test
     public void loanApplicationsCanBeApproved() throws Exception {
-        StubbedServletRequest request = new StubbedServletRequest(approveParams());
+        ServletRequestStub request = new ServletRequestStub(
+                approveParams());
         loanHandler.handle(null, baseRequest, request, response);
         response.getWriter().flush();
         assertEquals("{\"id\":3}\n", response.responseAsText());

@@ -10,7 +10,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
-public class StubbedResponse implements HttpServletResponse {
+public class ResponseStub implements HttpServletResponse {
 
     private final ByteArrayOutputStream output = new ByteArrayOutputStream();
     private final PrintWriter writer = new PrintWriter(output);
